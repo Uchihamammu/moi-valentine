@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Moi ❤️</title>
+    <style>
+        /* RESET & BODY */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            font-family: 'Courier New', Courier, monospace; /* Tech/Code Aesthetic */
+            overflow: hidden;
+            color: #333;
+        }
+
+        /* BACKGROUND HEARTS */
+        .bg-heart {
+            position: absolute;
+            top: -10vh;
+            font-size: 1.5rem;
+            color: #ff4d6d;
+            opacity: 0.6;
+            animation: fall linear forwards;
+            z-index: 0;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* MAIN CARD */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 77, 109, 0.2);
+            text-align: center;
+            z-index: 10;
+            max-width: 90%;
+            width: 420px;
+            border: 2px solid #ffccd5;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        h1 {
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* TYPING EFFECT & JOKE */
+        .joke-container {
+            min-height: 80px; /* Keeps card stable while typing */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .typewriter {
+            font-size: 1.2rem;
+            color: #590d22;
+            font-weight: bold;
+            border-right: 3px solid #ff4d6d; /* The cursor */
+            white-space: pre-wrap;
+            animation: blink 0.75s step-end infinite;
+        }
+
+        .highlight {
+            color: #d90429;
+            font-size: 1.4rem;
+            background: #ffe3e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            transform: rotate(-2deg); /* Slight tilt for emphasis */
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* BUTTON */
+        .btn {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #d90429;
+            transform: scale(1.05);
+        }
+
+        .hidden-msg {
+            display: none;
+            margin-top: 25px;
+            color: #800f2f;
+            font-size: 1rem;
+            line-height: 1.6;
+            animation: fadeIn 1.5s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+        <div style="font-size: 3.5rem; margin-bottom: 15px;">💌</div>
+        <h1>Hey, MOI</h1>
+        
+        <div class="joke-container">
+            <span id="joke-text" class="typewriter"></span>
+        </div>
+
+        <button class="btn" onclick="startSurprise()">Press Start</button>
+        
+        <div id="final-msg" class="hidden-msg">
+            (And I promise to always be your favorite person to talk nonsense with.) <br><br>
+            <b style="font-size: 1.2rem; color: #d90429;">Happy Valentine's Day! ❤️</b>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const textToType = "I LIKE IT WHEN YOU CALL ME NONSENSE";
+        const typeSpeed = 100; // Speed in ms
+        let i = 0;
+        const jokeElement = document.getElementById("joke-text");
+
+        // HEART RAIN BACKGROUND
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("bg-heart");
+            heart.innerText = Math.random() > 0.5 ? "❤️" : "🌸";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = Math.random() * 3 + 3 + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 400);
+
+        // TYPING LOGIC
+        function typeWriter() {
+            if (i < textToType.length) {
+                // Check if we are about to type the special word
+                if (textToType.substring(i, i + 8) === "NONSENSE") {
+                    const span = document.createElement("span");
+                    span.classList.add("highlight");
+                    span.innerText = "NONSENSE";
+                    jokeElement.appendChild(span);
+                    i += 8;
+                } else {
+                    jokeElement.innerHTML += textToType.charAt(i);
+                    i++;
+                }
+                setTimeout(typeWriter, typeSpeed);
+            } else {
+                // Stop cursor blinking when done
+                jokeElement.style.borderRight = "none";
+            }
+        }
+
+        // START BUTTON ACTION
+        function startSurprise() {
+            // 1. Play Music (Browsers require interaction to play audio)
+            const audio = document.getElementById("bg-music");
+            audio.volume = 0.5; // Set volume to 50%
+            audio.play().catch(error => {
+                console.log("Audio play failed (user didn't interact properly?):", error);
+            });
+
+            // 2. Hide Button
+            const btn = document.querySelector('.btn');
+            btn.style.display = "none";
+
+            // 3. Start Typing
+            typeWriter();
+
+            // 4. Reveal Final Message after typing ends
+            setTimeout(() => {
+                document.getElementById("final-msg").style.display = "block";
+            }, textToType.length * typeSpeed + 800);
+        }
+    </script>
+</body>
+</html>
