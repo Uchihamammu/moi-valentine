@@ -122,6 +122,7 @@
         #noBtn {
             background: #590d22;
             position: relative; 
+            transition: 0.1s; /* Fast movement */
         }
 
         /* PHOTO & HIDDEN MESSAGE */
@@ -134,15 +135,16 @@
         .moi-photo {
             width: 150px;
             height: 150px;
-            border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #ffccd5;
-            box-shadow: 0 0 25px rgba(255, 77, 109, 0.4);
             margin: 0 auto 15px auto;
             display: block;
+            background-color: transparent;
             
-            /* DREAMY SOFT FILTER (Fixes low quality) */
-            filter: contrast(1.1) brightness(1.1) blur(0.5px);
+            /* HEART SHAPE CUTTER (Calibrated for 150px image) */
+            clip-path: path("M75,135 C15,90 0,45 37.5,22.5 C56,11 75,45 75,45 C75,45 94,11 112.5,22.5 C150,45 135,90 75,135 Z");
+            
+            /* DREAMY GLOW + FILTER */
+            filter: contrast(1.1) brightness(1.1) blur(0.5px) drop-shadow(0 0 10px rgba(255, 77, 109, 0.6));
         }
 
         .msg-text {
@@ -172,11 +174,13 @@
 
         <div class="button-box" id="btn-container">
             <button class="btn" onclick="startSurprise()">YES, OF COURSE</button>
-            <button class="btn" id="noBtn" onmouseover="dodge()" onclick="dodge()" ontouchstart="dodge()">NO</button>
+            
+            <button class="btn" id="noBtn" onmouseover="dodge()" ontouchstart="dodge()" onclick="dodge()">NO</button>
         </div>
         
         <div id="final-content" class="hidden-content">
             <img src="moi.jpg.JPG" alt="Moi" class="moi-photo">
+            
             <div class="msg-text">
                 (And I promise to always be your favorite person to talk nonsense with.) <br><br>
                 <b style="font-size: 1.2rem; color: #d90429;">Happy Valentine's Day! ❤️</b>
