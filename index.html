@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Moi ❤️</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         /* RESET & BODY */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,7 +17,7 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            font-family: 'Courier New', Courier, monospace; /* Tech/Code Aesthetic */
+            font-family: 'Courier New', Courier, monospace; 
             overflow: hidden;
             color: #333;
         }
@@ -53,75 +56,103 @@
 
         h1 {
             color: #ff4d6d;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 1.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        /* TYPING EFFECT & JOKE */
+        /* TYPING EFFECT */
         .joke-container {
-            min-height: 80px; /* Keeps card stable while typing */
+            min-height: 60px; 
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .typewriter {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #590d22;
             font-weight: bold;
-            border-right: 3px solid #ff4d6d; /* The cursor */
+            border-right: 3px solid #ff4d6d;
             white-space: pre-wrap;
             animation: blink 0.75s step-end infinite;
         }
 
         .highlight {
             color: #d90429;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             background: #ffe3e9;
             padding: 2px 6px;
             border-radius: 4px;
             display: inline-block;
-            transform: rotate(-2deg); /* Slight tilt for emphasis */
+            transform: rotate(-2deg);
         }
 
-        @keyframes blink {
-            50% { border-color: transparent; }
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        /* BUTTONS */
+        .button-box {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            min-height: 50px; /* Space for moving button */
         }
 
-        /* BUTTON */
         .btn {
             background: #ff4d6d;
             color: white;
             border: none;
-            padding: 15px 35px;
-            font-size: 1.1rem;
+            padding: 12px 25px;
+            font-size: 1rem;
             border-radius: 50px;
             cursor: pointer;
             font-family: inherit;
-            margin-top: 20px;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
             transition: all 0.2s;
             font-weight: bold;
+            white-space: nowrap;
         }
 
-        .btn:hover {
-            background: #d90429;
-            transform: scale(1.05);
+        .btn:hover { background: #d90429; transform: scale(1.05); }
+        
+        /* The Runaway Button */
+        #noBtn {
+            background: #590d22;
+            position: relative; 
         }
 
-        .hidden-msg {
+        /* PHOTO & HIDDEN MESSAGE */
+        .hidden-content {
             display: none;
-            margin-top: 25px;
+            margin-top: 20px;
+            animation: fadeIn 2s ease-in-out; /* Slower fade for dreamy effect */
+        }
+
+        .moi-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ffccd5; /* Soft pink border */
+            box-shadow: 0 0 25px rgba(255, 77, 109, 0.4); /* Glow effect */
+            margin: 0 auto 15px auto;
+            display: block;
+            
+            /* DREAMY SOFT FILTER (Fixes low quality) */
+            filter: contrast(1.1) brightness(1.1) blur(0.5px);
+        }
+
+        .msg-text {
             color: #800f2f;
             font-size: 1rem;
             line-height: 1.6;
-            animation: fadeIn 1.5s;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
@@ -131,29 +162,36 @@
     </audio>
 
     <div class="card">
-        <div style="font-size: 3.5rem; margin-bottom: 15px;">💌</div>
-        <h1>Hey, MOI</h1>
+        <div style="font-size: 3rem; margin-bottom: 10px;">💌</div>
+        
+        <h1>Hey, MOI ❤️</h1>
         
         <div class="joke-container">
             <span id="joke-text" class="typewriter"></span>
         </div>
 
-        <button class="btn" onclick="startSurprise()">Press Start</button>
+        <div class="button-box" id="btn-container">
+            <button class="btn" onclick="startSurprise()">YES, OF COURSE</button>
+            <button class="btn" id="noBtn" onmouseover="dodge()" onclick="dodge()">NO</button>
+        </div>
         
-        <div id="final-msg" class="hidden-msg">
-            (And I promise to always be your favorite person to talk nonsense with.) <br><br>
-            <b style="font-size: 1.2rem; color: #d90429;">Happy Valentine's Day! ❤️</b>
+        <div id="final-content" class="hidden-content">
+            <img src="moi.jpg" alt="Moi" class="moi-photo">
+            <div class="msg-text">
+                (And I promise to always be your favorite person to talk nonsense with.) <br><br>
+                <b style="font-size: 1.2rem; color: #d90429;">Happy Valentine's Day! ❤️</b>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURATION
+        // CONFIG
         const textToType = "I LIKE IT WHEN YOU CALL ME NONSENSE";
-        const typeSpeed = 100; // Speed in ms
+        const typeSpeed = 80; 
         let i = 0;
         const jokeElement = document.getElementById("joke-text");
 
-        // HEART RAIN BACKGROUND
+        // HEART RAIN
         function createHeart() {
             const heart = document.createElement("div");
             heart.classList.add("bg-heart");
@@ -168,7 +206,6 @@
         // TYPING LOGIC
         function typeWriter() {
             if (i < textToType.length) {
-                // Check if we are about to type the special word
                 if (textToType.substring(i, i + 8) === "NONSENSE") {
                     const span = document.createElement("span");
                     span.classList.add("highlight");
@@ -181,31 +218,51 @@
                 }
                 setTimeout(typeWriter, typeSpeed);
             } else {
-                // Stop cursor blinking when done
                 jokeElement.style.borderRight = "none";
             }
         }
 
-        // START BUTTON ACTION
+        // RUNAWAY BUTTON LOGIC
+        function dodge() {
+            const noBtn = document.getElementById('noBtn');
+            const card = document.querySelector('.card'); 
+            
+            // Move within card bounds
+            const maxX = card.offsetWidth - noBtn.offsetWidth - 20;
+            const maxY = card.offsetHeight - noBtn.offsetHeight - 20;
+
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
+            noBtn.style.position = 'absolute'; 
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        // START SURPRISE
         function startSurprise() {
-            // 1. Play Music (Browsers require interaction to play audio)
+            // 1. Play Music 
             const audio = document.getElementById("bg-music");
-            audio.volume = 0.5; // Set volume to 50%
-            audio.play().catch(error => {
-                console.log("Audio play failed (user didn't interact properly?):", error);
+            audio.volume = 0.6;
+            audio.play().catch(e => console.log("Audio error:", e));
+
+            // 2. Hide Buttons
+            document.getElementById('btn-container').style.display = "none";
+
+            // 3. CONFETTI EXPLOSION
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
             });
 
-            // 2. Hide Button
-            const btn = document.querySelector('.btn');
-            btn.style.display = "none";
-
-            // 3. Start Typing
+            // 4. Start Typing
             typeWriter();
 
-            // 4. Reveal Final Message after typing ends
+            // 5. Reveal Photo & Message
             setTimeout(() => {
-                document.getElementById("final-msg").style.display = "block";
-            }, textToType.length * typeSpeed + 800);
+                document.getElementById("final-content").style.display = "block";
+            }, textToType.length * typeSpeed + 500);
         }
     </script>
 </body>
