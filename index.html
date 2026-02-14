@@ -98,7 +98,7 @@
             gap: 15px;
             justify-content: center;
             margin-top: 25px;
-            min-height: 50px; /* Space for moving button */
+            min-height: 50px; 
         }
 
         .btn {
@@ -122,7 +122,7 @@
         #noBtn {
             background: #590d22;
             position: relative; 
-            transition: 0.1s; /* Fast movement */
+            transition: 0.1s; 
         }
 
         /* PHOTO & HIDDEN MESSAGE */
@@ -140,7 +140,7 @@
             display: block;
             background-color: transparent;
             
-            /* HEART SHAPE CUTTER (Calibrated for 150px image) */
+            /* HEART SHAPE CUTTER */
             clip-path: path("M75,135 C15,90 0,45 37.5,22.5 C56,11 75,45 75,45 C75,45 94,11 112.5,22.5 C150,45 135,90 75,135 Z");
             
             /* DREAMY GLOW + FILTER */
@@ -173,7 +173,7 @@
         </div>
 
         <div class="button-box" id="btn-container">
-            <button class="btn" onclick="startSurprise()">YES, OF COURSE</button>
+            <button class="btn" id="yesBtn" onclick="startSurprise()">YES, OF COURSE</button>
             
             <button class="btn" id="noBtn" onmouseover="dodge()" ontouchstart="dodge()" onclick="dodge()">NO</button>
         </div>
@@ -226,17 +226,53 @@
             }
         }
 
-        // RUNAWAY BUTTON LOGIC
+        // RUNAWAY BUTTON LOGIC WITH COLLISION DETECTION
         function dodge() {
             const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
             const card = document.querySelector('.card'); 
             
             // Move within card bounds
             const maxX = card.offsetWidth - noBtn.offsetWidth - 20;
             const maxY = card.offsetHeight - noBtn.offsetHeight - 20;
 
-            const x = Math.random() * maxX;
-            const y = Math.random() * maxY;
+            let x, y;
+            let overlapping = true;
+            let attempts = 0;
+
+            // Keep generating random spots until it finds one that DOESN'T overlap with the YES button
+            while (overlapping && attempts < 50) {
+                x = Math.random() * maxX;
+                y = Math.random() * maxY;
+
+                // Get absolute positions to check for collision
+                const yesRect = yesBtn.getBoundingClientRect();
+                const cardRect = card.getBoundingClientRect();
+                
+                // Yes button coordinates relative to the card
+                const yesLeft = yesRect.left - cardRect.left;
+                const yesTop = yesRect.top - cardRect.top;
+                const yesRight = yesLeft + yesRect.width;
+                const yesBottom = yesTop + yesRect.height;
+
+                // Proposed No button coordinates
+                const noRight = x + noBtn.offsetWidth;
+                const noBottom = y + noBtn.offsetHeight;
+
+                // Add a 10px "safe zone" buffer around the Yes button
+                const buffer = 10;
+
+                // Collision Logic
+                if (x < yesRight + buffer &&
+                    noRight > yesLeft - buffer &&
+                    y < yesBottom + buffer &&
+                    noBottom > yesTop - buffer) {
+                    overlapping = true; // Still overlapping, loop will run again
+                } else {
+                    overlapping = false; // Safe spot found!
+                }
+                attempts++;
+            }
 
             noBtn.style.position = 'absolute'; 
             noBtn.style.left = x + 'px';
